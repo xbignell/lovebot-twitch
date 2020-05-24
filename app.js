@@ -1,27 +1,40 @@
 const tmi = require('tmi.js');
 require('dotenv').config();
+const config = require('./app/config');
 
 const options = {
     identity: {
         username: process.env.username,
         password: process.env.token
     },
-    channels: [
-        'gerentwitch'
-    ]
+    channels: config.channels
 };
 
 const client = new tmi.client(options);
 
-client.on("message", onmessagehandler);
+client.on("message", onMessageHandler);
 
 client.connect();
 
-function onmessagehandler(target, context, message, self) {
+function onMessageHandler(target, context, message, self) {
     if (self) return;
 
-    if (message === "guapa") {
-        client.say(target, '¡tú si que eres guap@! @' + context['display-name']);
+    if (target === '#' + context['display-name']) {
+        client.say(target, 'Stremea y shht!');
+        return;
+    }
+
+    let compliment = "";
+
+    let messageSplited = message.split(' ');
+    messageSplited.forEach(value => {
+        if (config.dictionaries.coolDictionary.includes(value)) {
+            compliment = value
+        }
+    });
+
+    if (compliment) {
+        client.say(target, '¡Tú si que eres ' + compliment + ' @' + context['display-name']);
     }
 }
 

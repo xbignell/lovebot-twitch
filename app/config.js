@@ -1,0 +1,2 @@
+exports.channels = require('./channels');
+exports.dictionaries = require('./dictionary');
