@@ -24,19 +24,47 @@ function onMessageHandler(target, context, message, self) {
         return;
     }
 
-    let compliment = "";
+    let compliment = getCompliment(config.dictionaries, message);
 
-    let messageSplited = message.split(' ');
-    messageSplited.forEach(value => {
-        if (config.dictionaries.coolDictionary.includes(value)) {
-            compliment = value
+    if (compliment['message']) {
+        let message = "";
+        switch (compliment['key']) {
+            case 'coolDictionary':
+                message = '¡Tú si que eres ' + compliment['message'] + ' @' + context['display-name'];
+                break;
+            case 'loveDictionary':
+                message = '¡A ti si que ' + compliment['message'] + ' @' + context['display-name'];
+                break;
+            default:
+                message = "<3";
+                break;
         }
-    });
-
-    if (compliment) {
-        client.say(target, '¡Tú si que eres ' + compliment + ' @' + context['display-name']);
+        client.say(target, message);
     }
 }
 
+function getCompliment(dictionaries, message) {
+    let compliment = [];
 
+    for (var key in dictionaries) {
+        let complimentMessage = checkCompliment(dictionaries[key], message);
+        if (complimentMessage) {
+            compliment['message'] = complimentMessage;
+            compliment['key'] = key;
+        }
+    }
 
+    return compliment;
+}
+
+function checkCompliment(dictionary, message) {
+    let compliment = "";
+
+    dictionary.forEach(value => {
+        if (message.includes(value)) {
+            compliment = value;
+        }
+    });
+
+    return compliment;
+}

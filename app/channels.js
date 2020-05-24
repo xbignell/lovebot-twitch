@@ -1,4 +1,5 @@
 module.exports = [
     "gerentwitch",
-    "reydelestablo"
+    "reydelestablo",
+    "kriissu"
 ];
