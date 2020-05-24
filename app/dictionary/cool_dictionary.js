@@ -17,4 +17,6 @@ module.exports = [
     "estupenda",
     "maja",
     "majo",
+    "bella",
+    "bello"
 ];
