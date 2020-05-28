@@ -19,35 +19,19 @@ client.connect();
 function onMessageHandler(target, context, message, self) {
     if (self) return;
 
-    if (target === '#' + context['display-name']) {
-        client.say(target, 'Stremea y shht!');
-        return;
-    }
-
-    let compliment = getCompliment(config.dictionaries, message);
+    let compliment = __getCompliment(config.dictionaries, message);
 
     if (compliment['message']) {
-        let message = "";
-        switch (compliment['key']) {
-            case 'coolDictionary':
-                message = '¡Tú si que eres ' + compliment['message'] + ' @' + context['display-name'];
-                break;
-            case 'loveDictionary':
-                message = '¡A ti si que ' + compliment['message'] + ' @' + context['display-name'];
-                break;
-            default:
-                message = "<3";
-                break;
-        }
+        let message = __getRandomMessage(compliment, context);
         client.say(target, message);
     }
 }
 
-function getCompliment(dictionaries, message) {
+function __getCompliment(dictionaries, message) {
     let compliment = [];
 
     for (var key in dictionaries) {
-        let complimentMessage = checkCompliment(dictionaries[key], message);
+        let complimentMessage = __checkCompliment(dictionaries[key], message);
         if (complimentMessage) {
             compliment['message'] = complimentMessage;
             compliment['key'] = key;
@@ -57,7 +41,7 @@ function getCompliment(dictionaries, message) {
     return compliment;
 }
 
-function checkCompliment(dictionary, message) {
+function __checkCompliment(dictionary, message) {
     let compliment = "";
 
     dictionary.forEach(value => {
@@ -67,4 +51,28 @@ function checkCompliment(dictionary, message) {
     });
 
     return compliment;
+}
+
+function __getRandomMessage(compliment, context) {
+    const messagesCount = config['messages'][compliment['key']].length;
+    let randomMessage = Math.floor(Math.random() * (messagesCount - 0));
+    let message = config['messages'][compliment['key']][randomMessage];
+
+    const arrayOptions = {
+        user: context['display-name'],
+        compliment: compliment['message']
+    };
+
+    return __translateVariables(message, arrayOptions);
+}
+
+function __translateVariables(message, arrayOptions) {
+    if (message.includes("%user%")) {
+        message = message.replace("%user%", "@" + arrayOptions['user']);
+    }
+    if (message.includes("%compliment%")) {
+        message = message.replace("%compliment%", arrayOptions['compliment']);
+    }
+
+    return message;
 }
